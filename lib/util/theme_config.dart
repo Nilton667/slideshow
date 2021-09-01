@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 mixin themeData {
   static Color themeColor = Color(0xffffffff);
   static Color whiteColor = Colors.white;
-  static Color primaryColor = Colors.black;
+  static MaterialColor themePrimaryColor = Colors.red;
 
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     backgroundColor: whiteColor,
     primaryColor: themeColor,
+    primarySwatch: themePrimaryColor,
     appBarTheme: AppBarTheme(
       actionsIconTheme: new IconThemeData(color: themeColor),
       iconTheme: new IconThemeData(color: themeColor),
@@ -31,6 +32,7 @@ mixin themeData {
     brightness: Brightness.dark,
     backgroundColor: Color(0xff121212),
     primaryColor: Color(0xff1f1f1f),
+    primarySwatch: themePrimaryColor,
     appBarTheme: AppBarTheme(
       iconTheme: new IconThemeData(color: whiteColor),
       textTheme: TextTheme(
