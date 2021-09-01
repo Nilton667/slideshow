@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 
 class HomeController extends GetxController {
   List data = [];
-  static const host = 'https://localhost/slideshow/';
-  int duration = 7;
+  static const host = 'http://10.0.2.2/slideshow/';
+  int duration = 20;
 
   Future getData() async {
     try {
@@ -27,9 +27,9 @@ class HomeController extends GetxController {
 
   void pageChange(int index, CarouselPageChangedReason reason) {
     if (data.length > 0) {
-      duration = data[index]['duration'] is int
+      /*duration = data[index]['duration'] is int
           ? data[index]['duration']
-          : int.parse(data[index]['duration']);
+          : int.parse(data[index]['duration']);*/
       update();
     }
   }

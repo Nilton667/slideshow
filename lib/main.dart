@@ -4,11 +4,13 @@ import 'package:slideshow/util/theme_config.dart';
 import 'views/home.dart';
 
 void main() {
-  runApp(GetMaterialApp(
-    debugShowCheckedModeBanner: false,
-    themeMode: ThemeMode.system,
-    theme: themeData.lightTheme,
-    darkTheme: themeData.darkTheme,
-    home: MyApp(),
-  ));
+  runApp(
+    GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.system,
+      theme: themeData.lightTheme,
+      darkTheme: themeData.darkTheme,
+      home: MyApp(),
+    ),
+  );
 }
