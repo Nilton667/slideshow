@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
         },
         builder: (_) {
           return RefreshIndicator(
+            onRefresh: c.getData,
             child: ListView(
               children: [
                 Center(
@@ -56,9 +57,6 @@ class MyApp extends StatelessWidget {
                                 viewportFraction: 1.0,
                                 aspectRatio: 16 / 9,
                                 height: Get.height,
-                                autoPlay: false,
-                                //Rotação automatica
-                                autoPlayInterval: Duration(seconds: c.duration),
                                 onPageChanged: c.pageChange,
                               ),
                               items: c.data.map(
@@ -85,7 +83,13 @@ class MyApp extends StatelessWidget {
                                                   decoration: BoxDecoration(
                                                     image: DecorationImage(
                                                       image: imageProvider,
-                                                      fit: BoxFit.cover,
+                                                      fit: data['fit'] ==
+                                                              'cover'
+                                                          ? BoxFit.cover
+                                                          : data['fit'] ==
+                                                                  'contain'
+                                                              ? BoxFit.contain
+                                                              : BoxFit.fill,
                                                     ),
                                                   ),
                                                 ),
@@ -120,10 +124,15 @@ class MyApp extends StatelessWidget {
                                                 ),
                                               )
                                             : Center(
-                                                child: videoPlayer(
-                                                  HomeController.host +
-                                                      data['nome'],
-                                                ),
+                                                child: c.chewieController !=
+                                                            null &&
+                                                        c
+                                                            .chewieController!
+                                                            .videoPlayerController
+                                                            .value
+                                                            .isInitialized
+                                                    ? chewie()
+                                                    : Center(),
                                               ),
                                       );
                                     },
@@ -134,7 +143,6 @@ class MyApp extends StatelessWidget {
                 )
               ],
             ),
-            onRefresh: c.getData,
           );
         },
       ),

@@ -1,13 +1,16 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:slideshow/controllers/home.controller.dart';
 import 'package:video_player/video_player.dart';
 
-Widget videoPlayer(String link) {
-  final videoController = VideoPlayerController.network(link);
-  Future.wait([videoController.initialize()]);
+Future<void> videoPlayer(String link) async {
+  final c = Get.put(HomeController());
+  c.videoController = VideoPlayerController.network(link);
+  await Future.wait([c.videoController.initialize()]);
 
-  final chewieController = ChewieController(
-    videoPlayerController: videoController,
+  c.chewieController = new ChewieController(
+    videoPlayerController: c.videoController,
     showControls: false,
     autoPlay: true,
     looping: false,
@@ -22,11 +25,15 @@ Widget videoPlayer(String link) {
       );
     },
   );
-  videoController.play();
+  c.update();
+}
+
+Widget chewie() {
+  final c = Get.put(HomeController());
   return AspectRatio(
     aspectRatio: 16 / 9,
     child: Chewie(
-      controller: chewieController,
+      controller: c.chewieController as ChewieController,
     ),
   );
 }
