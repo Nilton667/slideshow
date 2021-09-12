@@ -17,9 +17,9 @@ class HomeController extends GetxController {
   //Data
   List data = [];
   //Routs
-  //static const host = 'http://10.0.2.2/slideshow/';
+  static const host = 'http://10.0.2.2/slideshow/';
   //static const host = 'http://localhost/slideshow/';
-  static const host = 'https://slideshow.rubro.ao/';
+  //static const host = 'https://slideshow.rubro.ao/';
   CarouselController carouselController = new CarouselController();
   //Carousel setting
   int durationSlider = 0;
@@ -48,7 +48,9 @@ class HomeController extends GetxController {
             Duration(seconds: durationSlider),
             () async {
               carouselController.nextPage(
-                  duration: Duration(seconds: nextTime), curve: Curves.linear);
+                duration: Duration(seconds: nextTime),
+                curve: Curves.linear,
+              );
             },
           );
         }

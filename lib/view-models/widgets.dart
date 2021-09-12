@@ -28,12 +28,28 @@ Future<void> videoPlayer(String link) async {
   c.update();
 }
 
+//Leitor de video
 Widget chewie() {
   final c = Get.put(HomeController());
   return AspectRatio(
     aspectRatio: 16 / 9,
     child: Chewie(
       controller: c.chewieController as ChewieController,
+    ),
+  );
+}
+
+//Loading
+Widget loading() {
+  return Container(
+    height: Get.height,
+    width: Get.width,
+    child: Center(
+      child: CircularProgressIndicator(
+        valueColor: new AlwaysStoppedAnimation<Color>(
+          Colors.grey,
+        ),
+      ),
     ),
   );
 }
