@@ -8,18 +8,22 @@ import 'package:http/http.dart' as http;
 import 'package:chewie/chewie.dart';
 import 'package:slideshow/view-models/widgets.dart';
 import 'package:video_player/video_player.dart';
+import 'package:get_storage/get_storage.dart';
 
 class HomeController extends GetxController {
+  static const permission = "oratoriam";
   //Video Controller
   ChewieController? chewieController;
   late VideoPlayerController videoController;
 
   //Data
   List data = [];
+  int id = 0;
   //Routs
-  static const host = 'http://10.0.2.2/slideshow/';
-  //static const host = 'http://localhost/slideshow/';
+  //static const host = 'http://10.0.2.2/slideshow/app/api/moble_api/';
   //static const host = 'https://slideshow.rubro.ao/';
+  static const host = 'https://vending2you.pt/tvcomunidade/app/api/moble_api/';
+  static const fileDir = host + '../../../publico/img/galeria/';
   CarouselController carouselController = new CarouselController();
   //Carousel setting
   int durationSlider = 0;
@@ -28,11 +32,39 @@ class HomeController extends GetxController {
   //Loading page
   bool isLoading = true;
 
+  Future<void> updateId(String value) async {
+    final box = GetStorage();
+    if (value == 'up') {
+      id = id + 1;
+      box.write('id', id);
+      getData();
+    } else {
+      if (id <= 0) {
+        return;
+      }
+      id--;
+      box.write('id', id);
+      getData();
+    }
+    print(id);
+  }
+
   //Get image and video
   Future getData() async {
+    if (!isLoading) {
+      isLoading = true;
+      update();
+    }
+    final box = GetStorage();
+    id = box.read('id') is int ? box.read('id') : 0;
     try {
-      var res = await http.get(
-        Uri.parse(host + "index.php"),
+      var res = await http.post(
+        Uri.parse(host + "home"),
+        body: {
+          "getData": "true",
+          "id": id.toString(),
+          "permission": permission,
+        },
       );
       if (res.statusCode == 200) {
         var resBody = json.decode(res.body);
@@ -53,6 +85,8 @@ class HomeController extends GetxController {
               );
             },
           );
+        } else {
+          data = [];
         }
       }
     } catch (e) {
@@ -83,7 +117,7 @@ class HomeController extends GetxController {
       //Carregando o video
       if (data[index]['tipo'] == 'video') {
         await videoPlayer(
-          HomeController.host + data[index]['nome'],
+          fileDir + data[index]['nome'],
         );
       }
       timer = Timer(

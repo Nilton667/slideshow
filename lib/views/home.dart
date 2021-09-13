@@ -17,115 +17,128 @@ class MyApp extends StatelessWidget {
       shortcuts: {
         LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
       },
-      child: Scaffold(
-        body: GetBuilder(
-          init: HomeController(),
-          initState: (_) {
-            c.getData();
-          },
-          builder: (_) {
-            return RefreshIndicator(
-              onRefresh: c.getData,
-              child: ListView(
-                children: [
-                  Center(
-                    child: c.isLoading == true
-                        ? loading()
-                        : c.isLoading == false && c.data.length <= 0
-                            ? Container(
-                                height: Get.height,
-                                width: Get.width,
-                                padding: const EdgeInsets.all(8.0),
-                                child: Center(
-                                  child: Text(
-                                    'Sem conteúdo a ser exibido!',
-                                    style: TextStyle(
-                                        fontSize: 22.0, color: Colors.grey),
-                                  ),
-                                ),
-                              )
-                            : CarouselSlider(
-                                carouselController: c.carouselController,
-                                options: CarouselOptions(
-                                  viewportFraction: 1.0,
-                                  aspectRatio: 16 / 9,
+      child: RawKeyboardListener(
+        onKey: (event) async {
+          if (event.logicalKey.debugName == "Arrow Down") {
+            c.updateId('down');
+          } else if (event.logicalKey.debugName == "Arrow Up") {
+            c.updateId('up');
+          }
+        },
+        focusNode: FocusNode(),
+        child: Scaffold(
+          body: GetBuilder(
+            init: HomeController(),
+            initState: (_) {
+              //Ativar apenas se for em testes
+              //c.getData();
+            },
+            builder: (_) {
+              return RefreshIndicator(
+                onRefresh: c.getData,
+                child: ListView(
+                  children: [
+                    Center(
+                      child: c.isLoading == true
+                          ? loading()
+                          : c.isLoading == false && c.data.length <= 0
+                              ? Container(
                                   height: Get.height,
-                                  onPageChanged: c.pageChange,
+                                  width: Get.width,
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Text(
+                                      'Sem conteúdo a ser exibido!',
+                                      style: TextStyle(
+                                          fontSize: 22.0, color: Colors.grey),
+                                    ),
+                                  ),
+                                )
+                              : CarouselSlider(
+                                  carouselController: c.carouselController,
+                                  options: CarouselOptions(
+                                    viewportFraction: 1.0,
+                                    aspectRatio: 16 / 9,
+                                    height: Get.height,
+                                    onPageChanged: c.pageChange,
+                                  ),
+                                  items: c.data.map(
+                                    (data) {
+                                      return Builder(
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            height: Get.height,
+                                            width: Get.width,
+                                            decoration: BoxDecoration(
+                                              color: themeData.themeColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(0.0),
+                                            ),
+                                            child: data['tipo'] == 'imagem'
+                                                ? CachedNetworkImage(
+                                                    imageUrl:
+                                                        HomeController.fileDir +
+                                                            data['nome'],
+                                                    imageBuilder: (context,
+                                                            imageProvider) =>
+                                                        Container(
+                                                      height: Get.height,
+                                                      width: Get.width,
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: data['fit'] ==
+                                                                  'cover'
+                                                              ? BoxFit.cover
+                                                              : data['fit'] ==
+                                                                      'contain'
+                                                                  ? BoxFit
+                                                                      .contain
+                                                                  : BoxFit.fill,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            loading(),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Container(
+                                                      height: Get.height,
+                                                      width: Get.width,
+                                                      color: Color.fromRGBO(
+                                                          0, 0, 0, 0.1),
+                                                      child: Center(
+                                                        child: Icon(
+                                                          Icons.error,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Center(
+                                                    child: c.chewieController !=
+                                                                null &&
+                                                            c
+                                                                .chewieController!
+                                                                .videoPlayerController
+                                                                .value
+                                                                .isInitialized
+                                                        ? chewie()
+                                                        : loading(),
+                                                  ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ).toList(),
                                 ),
-                                items: c.data.map(
-                                  (data) {
-                                    return Builder(
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                          height: Get.height,
-                                          width: Get.width,
-                                          decoration: BoxDecoration(
-                                            color: themeData.themeColor,
-                                            borderRadius:
-                                                BorderRadius.circular(0.0),
-                                          ),
-                                          child: data['tipo'] == 'imagem'
-                                              ? CachedNetworkImage(
-                                                  imageUrl:
-                                                      HomeController.host +
-                                                          data['nome'],
-                                                  imageBuilder: (context,
-                                                          imageProvider) =>
-                                                      Container(
-                                                    height: Get.height,
-                                                    width: Get.width,
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                        image: imageProvider,
-                                                        fit: data['fit'] ==
-                                                                'cover'
-                                                            ? BoxFit.cover
-                                                            : data['fit'] ==
-                                                                    'contain'
-                                                                ? BoxFit.contain
-                                                                : BoxFit.fill,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  placeholder: (context, url) =>
-                                                      loading(),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          Container(
-                                                    height: Get.height,
-                                                    width: Get.width,
-                                                    color: Color.fromRGBO(
-                                                        0, 0, 0, 0.1),
-                                                    child: Center(
-                                                      child: Icon(
-                                                        Icons.error,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Center(
-                                                  child: c.chewieController !=
-                                                              null &&
-                                                          c
-                                                              .chewieController!
-                                                              .videoPlayerController
-                                                              .value
-                                                              .isInitialized
-                                                      ? chewie()
-                                                      : loading(),
-                                                ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                ).toList(),
-                              ),
-                  )
-                ],
-              ),
-            );
-          },
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
