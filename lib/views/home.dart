@@ -66,6 +66,7 @@ class MyApp extends StatelessWidget {
                                     (data) {
                                       return Builder(
                                         builder: (BuildContext context) {
+                                          print(c.fileDir + data['nome']);
                                           return Container(
                                             height: Get.height,
                                             width: Get.width,
@@ -76,9 +77,8 @@ class MyApp extends StatelessWidget {
                                             ),
                                             child: data['tipo'] == 'imagem'
                                                 ? CachedNetworkImage(
-                                                    imageUrl:
-                                                        HomeController.fileDir +
-                                                            data['nome'],
+                                                    imageUrl: c.fileDir +
+                                                        data['nome'],
                                                     imageBuilder: (context,
                                                             imageProvider) =>
                                                         Container(

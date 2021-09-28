@@ -20,10 +20,10 @@ class HomeController extends GetxController {
   List data = [];
   int id = 0;
   //Routs
-  //static const host = 'http://10.0.2.2/slideshow/app/api/moble_api/';
+  static const host = 'http://10.0.2.2:8000/';
   //static const host = 'https://slideshow.rubro.ao/';
-  static const host = 'https://vending2you.pt/tvcomunidade/app/api/moble_api/';
-  static const fileDir = host + '../../../publico/img/galeria/';
+  //static const host = 'https://vending2you.pt/tvcomunidade/app/api/moble_api/';
+  String fileDir = host + 'storage/';
   CarouselController carouselController = new CarouselController();
   //Carousel setting
   int durationSlider = 0;
@@ -59,7 +59,7 @@ class HomeController extends GetxController {
     id = box.read('id') is int ? box.read('id') : 0;
     try {
       var res = await http.post(
-        Uri.parse(host + "home"),
+        Uri.parse(host + "api/slider/get"),
         body: {
           "getData": "true",
           "id": id.toString(),
@@ -68,6 +68,7 @@ class HomeController extends GetxController {
       );
       if (res.statusCode == 200) {
         var resBody = json.decode(res.body);
+        print(res.body);
         if (resBody is List) {
           data = resBody;
           durationSlider = data[0]['duration'] is int
