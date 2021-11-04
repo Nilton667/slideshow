@@ -2,36 +2,42 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:slideshow/controllers/home.controller.dart';
+import 'package:slideshow/util/global.dart';
 import 'package:slideshow/view-models/widgets.dart';
+import 'package:slideshow/views/setid.dart';
 import './../util/theme_config.dart';
 import 'package:get/get.dart';
 
-class MyApp extends StatelessWidget {
+class Home extends StatelessWidget {
   final c = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
-    //Full Screen
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     return Shortcuts(
       shortcuts: {
         LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
       },
       child: RawKeyboardListener(
-        onKey: (event) async {
-          if (event.logicalKey.debugName == "Arrow Down") {
-            c.updateId('down');
-          } else if (event.logicalKey.debugName == "Arrow Up") {
-            c.updateId('up');
+        onKey: (RawKeyEvent event) async {
+          if (event.runtimeType == RawKeyDownEvent) {
+            if (event.logicalKey.keyLabel == '0') {
+              final box = await GetStorage();
+              await box.remove('id');
+              Get.offAll(() => Verify());
+            }
           }
         },
+        autofocus: true,
         focusNode: FocusNode(),
         child: Scaffold(
           body: GetBuilder(
             init: HomeController(),
             initState: (_) {
-              //Ativar apenas se for em testes
-              //c.getData();
+              final box = GetStorage();
+              c.id = box.read('id') is String ? box.read('id') : 0;
+              c.getData();
             },
             builder: (_) {
               return RefreshIndicator(
@@ -66,7 +72,6 @@ class MyApp extends StatelessWidget {
                                     (data) {
                                       return Builder(
                                         builder: (BuildContext context) {
-                                          print(c.fileDir + data['nome']);
                                           return Container(
                                             height: Get.height,
                                             width: Get.width,
@@ -77,8 +82,8 @@ class MyApp extends StatelessWidget {
                                             ),
                                             child: data['tipo'] == 'imagem'
                                                 ? CachedNetworkImage(
-                                                    imageUrl: c.fileDir +
-                                                        data['nome'],
+                                                    imageUrl:
+                                                        fileDir + data['nome'],
                                                     imageBuilder: (context,
                                                             imageProvider) =>
                                                         Container(
